@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>用户注册</title>
+
+    <!-- Bootstrap 样式 -->
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+          integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+          crossorigin="anonymous"/>
+
+    <!-- jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@1.11.1/dist/jquery.min.js"></script>
+    <!-- jQuery Validate -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <!-- MD5 -->
+    <script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.19.0/js/md5.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8 offset-sm-2">
+            <div class="border-bottom mb-4 mt-4 pb-2">
+                <h3>注册新用户</h3>
+            </div>
+
+            <!-- 错误提示（如手机号重复） -->
+            <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                <span th:text="${errorMessage}"></span>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <form id="registerForm" method="post" th:action="@{/register}" class="form-horizontal">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="phone">手机号</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="phone" name="phone"
+                                       placeholder="请输入手机号"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="username">用户名</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="username" name="username"
+                                       placeholder="请输入用户名"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="password">密码</label>
+                            <div class="col-sm-6">
+                                <input type="password" class="form-control" id="password" name="password"
+                                       placeholder="请输入密码"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-sm-9 offset-sm-4">
+                                <button type="submit" class="btn btn-success">注册</button>
+                                <a href="/login/index" class="btn btn-link">已有账号？去登录</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#registerForm").validate({
+            rules: {
+                phone: {
+                    required: true,
+                    minlength: 11
+                },
+                username: {
+                    required: true,
+                    minlength: 2
+                },
+                password: {
+                    required: true,
+                    minlength: 5
+                }
+            },
+            messages: {
+                phone: {
+                    required: "请输入手机号",
+                    minlength: "手机号长度至少为11位"
+                },
+                username: {
+                    required: "请输入用户名",
+                    minlength: "用户名长度至少为2位"
+                },
+                password: {
+                    required: "请输入密码",
+                    minlength: "密码长度至少为5位"
+                }
+            },
+            errorElement: "em",
+            errorPlacement: function (error, element) {
+                error.addClass("invalid-feedback");
+                error.insertAfter(element);
+            },
+            highlight: function (element) {
+                $(element).addClass("is-invalid").removeClass("is-valid");
+            },
+            unhighlight: function (element) {
+                $(element).addClass("is-valid").removeClass("is-invalid");
+            }
+        });
+    });
+</script>
+</body>
+</html>
