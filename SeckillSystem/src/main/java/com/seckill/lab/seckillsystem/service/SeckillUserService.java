@@ -14,8 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+
+
 
 @Service
 public class SeckillUserService {
@@ -30,9 +32,6 @@ public class SeckillUserService {
     @Autowired
     private RedisService redisService;
 
-    /**
-     * 根据id取得对象，先去缓存中取
-     */
     public User getByPhone(String phone) {
         // 1.先根据手机尝试查询缓存
         User user = redisService.get(SeckillUserKey.getByPhone, "" + phone, User.class);
@@ -49,20 +48,20 @@ public class SeckillUserService {
         return user;
     }
 
-//    public User getByToken(String token, HttpServletResponse response) {
-//        if (StringUtils.isEmpty(token)) {
-//            return null;
-//        }
-//
-//        User user = redisService.get(SeckillUserKey.token, token, User.class);
-//        // 再次请求的时候，延长有效期
-//        if (user != null) {
-//            addCookie(user, token);
-//        }
-//        return user;
-//    }//根据token获取用户信息
+    public User getByToken(String token, HttpServletResponse responses) {
+        if (StringUtils.isEmpty(token)) {
+            return null;
+        }
 
-    public String loginTest(LoginVo loginVo) {
+        User user = redisService.get(SeckillUserKey.token, token, User.class);
+        // 再次请求的时候，延长有效期
+        if (user != null) {
+            addCookie(user, token,responses);
+        }
+        return user;
+    }//根据token获取用户信息
+
+    public String loginTest(LoginVo loginVo,HttpServletResponse responses) {
         if (loginVo == null) {
             return ResultCode.SERVER_ERROR.getMsg();
         }
@@ -88,11 +87,11 @@ public class SeckillUserService {
         }
         // 生成cookie
         String token = UUIDUtil.uuid();
-        addCookie(user, token);
+        addCookie(user, token, responses);
         return token;
     }
 
-    public ResultCode login(LoginVo loginVo) {
+    public ResultCode login(LoginVo loginVo,HttpServletResponse responses) {
         if (loginVo == null) {
             return ResultCode.SERVER_ERROR;
         }
@@ -118,7 +117,7 @@ public class SeckillUserService {
         }
         // 生成cookie
         String token = UUIDUtil.uuid();
-        addCookie(user, token);
+        addCookie(user, token, responses);
         return ResultCode.SUCCESS;
 
     }
@@ -126,7 +125,7 @@ public class SeckillUserService {
     /**
      * 添加或者更新cookie
      */
-    public void addCookie(User user, String token) {
+    public void addCookie(User user, String token,HttpServletResponse responses) {
         // 可以用旧的token，不用每次都生成cookie
         // 将token写到cookie当中，然后传递给客户端
         // 此token对应的是哪一个用户,将我们的私人信息存放到一个第三方的缓存中
@@ -138,5 +137,6 @@ public class SeckillUserService {
         cookie.setMaxAge(SeckillUserKey.token.expireSeconds());
         // 设置网站的根目录
         cookie.setPath("/");
+        responses.addCookie(cookie);
     }
 }

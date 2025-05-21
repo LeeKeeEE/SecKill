@@ -40,8 +40,6 @@ public class UserService {
             return false; // 已存在手机号，不能注册
         }
 
-
-
         if (phone!=null && username != null && !username.isEmpty() && password != null && !password.isEmpty()) {
             User newUser = new User();
             newUser.setPhone(phone);

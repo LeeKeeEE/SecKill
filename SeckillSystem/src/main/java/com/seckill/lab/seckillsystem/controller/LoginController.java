@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletResponse;
+
+import jakarta.validation.Valid;
 
 @RequestMapping("/login")
 @Controller
@@ -23,6 +25,9 @@ public class LoginController {
 
     @Autowired
     private SeckillUserService seckillUserService;
+
+
+
 
     private final Logger logger = (Logger) LoggerFactory.getLogger(Logger.class);
 
@@ -35,33 +40,15 @@ public class LoginController {
 
     @RequestMapping("/token_test")
     @ResponseBody
-    public Result<String> doLoginTest(@RequestParam("phone") String phone,
-                                      @RequestParam("password") String password){
-        LoginVo loginVo = new LoginVo();
-        loginVo.setPhone(phone);
-        loginVo.setPassword(password);
-
-        String token = seckillUserService.loginTest(loginVo);
-
-        logger.info("[LoginController] loginTest result: {}", token);
-
+    public Result<String> doLoginTest(@Valid LoginVo loginVo,HttpServletResponse response)  {
+        String token = seckillUserService.loginTest( loginVo,response);
         return Result.success(token);
     }
 
     @PostMapping("/do_login")
     @ResponseBody
-    public Result<Boolean> doLogin(@RequestParam("phone") String phone,
-                                   @RequestParam("password") String password)
-     {
-
-         LoginVo loginVo = new LoginVo();
-         loginVo.setPhone(phone);
-         loginVo.setPassword(password);
-
-        ResultCode resultCode = seckillUserService.login(loginVo);
-
-        logger.info("[LoginController] login result: {}", resultCode);
-
+    public Result<Boolean> doLogin(@Valid LoginVo loginVo,HttpServletResponse response) {
+        ResultCode resultCode = seckillUserService.login(loginVo,response);
         if (resultCode.getCode() == 0) {
             return Result.success(true);
         } else {
