@@ -15,6 +15,6 @@ public class SeckillUserKey extends BasePrefix {
     /**
      * 对象缓存一般没有有效期，永久有效
      */
-    public static SeckillUserKey getById = new SeckillUserKey(0, "id");
+    public static SeckillUserKey getByPhone = new SeckillUserKey(0, "phone");
 
 }

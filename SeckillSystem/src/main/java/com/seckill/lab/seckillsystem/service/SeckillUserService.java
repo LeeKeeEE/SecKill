@@ -33,9 +33,9 @@ public class SeckillUserService {
     /**
      * 根据id取得对象，先去缓存中取
      */
-    public User getById(String phone) {
-        // 1.先根据id尝试查询缓存
-        User user = redisService.get(SeckillUserKey.getById, "" + phone, User.class);
+    public User getByPhone(String phone) {
+        // 1.先根据手机尝试查询缓存
+        User user = redisService.get(SeckillUserKey.getByPhone, "" + phone, User.class);
         // 缓存中拿到
         if (user != null) {
             return user;
@@ -44,26 +44,23 @@ public class SeckillUserService {
         user = userRepository.findByPhone(phone);
         if (user != null) {
             // 3.数据库存在则设置缓存
-            redisService.set(SeckillUserKey.getById, "" + phone, user);
+            redisService.set(SeckillUserKey.getByPhone, "" + phone, user);
         }
         return user;
     }
 
-    /**
-     * 根据token获取用户信息
-     */
-    public User getByToken(String token, HttpServletResponse response) {
-        if (StringUtils.isEmpty(token)) {
-            return null;
-        }
-
-        User user = redisService.get(SeckillUserKey.token, token, User.class);
-        // 再次请求的时候，延长有效期
-        if (user != null) {
-            addCookie(user, token);
-        }
-        return user;
-    }
+//    public User getByToken(String token, HttpServletResponse response) {
+//        if (StringUtils.isEmpty(token)) {
+//            return null;
+//        }
+//
+//        User user = redisService.get(SeckillUserKey.token, token, User.class);
+//        // 再次请求的时候，延长有效期
+//        if (user != null) {
+//            addCookie(user, token);
+//        }
+//        return user;
+//    }//根据token获取用户信息
 
     public String loginTest(LoginVo loginVo) {
         if (loginVo == null) {
@@ -73,7 +70,7 @@ public class SeckillUserService {
         String mobile = loginVo.getPhone();
         String password = loginVo.getPassword();
         // 判断手机号是否存在
-        User user = getById(Long.toString(Long.parseLong(mobile)));
+        User user = getByPhone(Long.toString(Long.parseLong(mobile)));
         if (user == null) {
             // 查询不到该手机号的用户
             return ResultCode.MOBILE_NOT_EXIST.getMsg();
@@ -103,7 +100,7 @@ public class SeckillUserService {
         String mobile = loginVo.getPhone();
         String formPass = loginVo.getPassword();
         // 判断手机号是否存在
-        User user = getById(Long.toString(Long.parseLong(mobile)));
+        User user = getByPhone(Long.toString(Long.parseLong(mobile)));
         // 查询不到该手机号的用户
         if (user == null) {
             return ResultCode.MOBILE_NOT_EXIST;
