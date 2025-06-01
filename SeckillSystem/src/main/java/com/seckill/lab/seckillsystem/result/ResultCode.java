@@ -16,6 +16,9 @@ public class ResultCode {
     public static ResultCode REQUEST_ILLEGAL = new ResultCode(500102, "非法请求!");
     public static ResultCode SECKILL_FAIL = new ResultCode(500103, "秒杀失败!");
     public static ResultCode ACCESS_LIMIT = new ResultCode(500104, "达到访问限制次数，访问太频繁!");
+    public static ResultCode REGISTER_ERROR = new ResultCode(500105, "手机或用户已存在");
+
+
     public static ResultCode SESSION_ERROR = new ResultCode(500210, "session失效!");
     public static ResultCode PASSWORD_EMPTY = new ResultCode(500211, "密码不能为空!");
     public static ResultCode MOBILE_EMPTY = new ResultCode(500212, "手机号不能为空!");
@@ -25,6 +28,7 @@ public class ResultCode {
     public static ResultCode ORDER_NOT_EXIST = new ResultCode(500410, "订单不存在!");
     public static ResultCode SECKILL_OVER_ERROR = new ResultCode(500500, "商品秒杀完毕，库存不足!");
     public static ResultCode REPEAT_SECKILL = new ResultCode(500500, "不能重复秒杀!");
+
 
     public ResultCode(int code, String msg) {
         this.code = code;

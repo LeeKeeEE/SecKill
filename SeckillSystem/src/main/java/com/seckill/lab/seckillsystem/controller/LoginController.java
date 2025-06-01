@@ -19,15 +19,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import jakarta.validation.Valid;
 
-@RequestMapping("/login")
+@RequestMapping("/api/login")
 @Controller
 public class LoginController {
 
     @Autowired
     private SeckillUserService seckillUserService;
-
-
-
 
     private final Logger logger = (Logger) LoggerFactory.getLogger(Logger.class);
 
@@ -47,7 +44,8 @@ public class LoginController {
 
     @PostMapping("/do_login")
     @ResponseBody
-    public Result<Boolean> doLogin(@Valid LoginVo loginVo,HttpServletResponse response) {
+    public Result<Boolean> doLogin(@Valid @RequestBody LoginVo loginVo,HttpServletResponse response) {
+        logger.info("Trying to login " + loginVo.getPhone() + ' ' + loginVo.getPassword());
         ResultCode resultCode = seckillUserService.login(loginVo,response);
         if (resultCode.getCode() == 0) {
             return Result.success(true);

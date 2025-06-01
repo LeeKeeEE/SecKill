@@ -1,7 +1,10 @@
 package com.seckill.lab.seckillsystem.service;
 
+import com.seckill.lab.seckillsystem.controller.RegisterController;
 import com.seckill.lab.seckillsystem.entity.User;
 import com.seckill.lab.seckillsystem.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +15,7 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     @Autowired
     private UserRepository userRepository;
 
@@ -33,10 +36,12 @@ public class UserService {
         User existingUser = userRepository.findByPhone(phone);
 
         if (userRepository.findByUsername(username) != null) {
+            logger.info("Username " + username + " already exists");
             return false; // 用户名已存在
         }
 
         if (existingUser != null) {
+            logger.info("Phone number " + phone + " already exists");
             return false; // 已存在手机号，不能注册
         }
 
@@ -52,8 +57,10 @@ public class UserService {
             newUser.setPassword(encryptedPassword);
             newUser.setSalt(salt);
             userRepository.save(newUser);
+            logger.info("New User " + newUser.toString());
             return true;
         }
+        logger.info("Failed to save user");
         return false;
     }
 }

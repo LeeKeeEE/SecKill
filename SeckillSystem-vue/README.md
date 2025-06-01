@@ -11,3 +11,8 @@
 ```sh  
 cd SeckillSystem-vue  
 npm run dev  
+
+# 如果无法运行  
+尝试删掉node_modules文件夹和package-lock.json  
+然后运行
+npm install   

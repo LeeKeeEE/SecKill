@@ -119,7 +119,6 @@ public class SeckillUserService {
         String token = UUIDUtil.uuid();
         addCookie(user, token, responses);
         return ResultCode.SUCCESS;
-
     }
 
     /**

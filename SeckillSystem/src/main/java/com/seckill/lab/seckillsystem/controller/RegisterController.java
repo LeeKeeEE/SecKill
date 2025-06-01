@@ -1,7 +1,12 @@
 package com.seckill.lab.seckillsystem.controller;
 
-import ch.qos.logback.classic.Logger;
+
+import com.seckill.lab.seckillsystem.result.Result;
+import com.seckill.lab.seckillsystem.result.ResultCode;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -11,6 +16,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import com.seckill.lab.seckillsystem.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class RegisterController {
+
+    private static final Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
     @Autowired
     private UserService userService;
@@ -46,6 +56,26 @@ public class RegisterController {
         } else {
             model.addAttribute("errorMessage", "注册失败，手机或用户已存在。");
             return "register";
+        }
+    }
+
+    // 3. 处理API注册表单提交（POST请求，返回JSON）
+    @PostMapping(value = "api/register", produces = "application/json")
+    @ResponseBody // 添加此注解使方法返回JSON
+    public ResponseEntity<Result<Boolean>> handleApiRegistration(@RequestParam("phone") String phone,
+                                                                 @RequestParam("username") String username,
+                                                                 @RequestParam("password") String password) {
+
+        logger.info("Accept api request: " + phone + " " + username + " " + password);
+
+        boolean isRegistered = userService.registerUser(phone, username, password);
+
+        if (isRegistered) {
+            return ResponseEntity.ok(Result.success(true));
+        } else {
+            logger.info("Failed to register");
+            Result<Boolean> errorResult = Result.error(ResultCode.REGISTER_ERROR.fillArgs("注册失败，手机或用户已存在。"));
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResult);
         }
     }
 }
