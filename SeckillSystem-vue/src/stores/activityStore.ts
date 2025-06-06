@@ -43,24 +43,18 @@ export const useActivityStore = defineStore('activity', {
       this.error = null;
       this.currentActivity = null;
       try {
-        // 你的后端 SeckillController.java 目前没有直接通过 /api/seckill/activities/{id} 获取单个活动的接口
-        // 你可能需要：
-        // 1. 在后端添加一个获取单个活动详情的接口。
-        // 2. 或者，如果活动数量不多，可以在前端从 fetchActivities 获取到的列表中查找。
-        // 这里假设你从列表中查找，如果后端有接口，则替换为 apiClient.get(`/seckill/activities/${id}`)
-        if (this.activities.length === 0) {
-          await this.fetchActivities(); // 如果列表为空，先获取列表
-        }
-        const activity = this.activities.find(act => act.id === Number(id));
-        if (activity) {
-          this.currentActivity = activity;
-        } else {
-          throw new Error(`Activity with ID ${id} not found.`);
-        }
-
+        // 假设后端接口为 /api/seckill/activities/{id}
+        const response = await apiClient.get<SeckillActivity>(`/seckill/activities/${id}`);
+        this.currentActivity = response.data;
       } catch (err: any) {
         this.error = err.response?.data?.message || err.message || '获取活动详情失败';
-        console.error(`Failed to fetch activity ${id}:`, err);
+        console.error(`获取活动 ${id} 失败:`, err);
+        // 如果直接获取失败且列表存在，则回退到列表查找
+        // (如果强制直接获取，则移除此逻辑)
+        if (this.activities.length > 0) {
+            const activity = this.activities.find(act => act.id === Number(id));
+            if (activity) this.currentActivity = activity;
+        }
       } finally {
         this.isLoading = false;
       }
