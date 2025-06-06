@@ -1,15 +1,25 @@
 package com.seckill.lab.seckillsystem.controller;
 
 import com.seckill.lab.seckillsystem.entity.SeckillActivity;
+import com.seckill.lab.seckillsystem.result.Result;
+import com.seckill.lab.seckillsystem.result.ResultCode;
 import com.seckill.lab.seckillsystem.service.OrderService;
+import com.seckill.lab.seckillsystem.service.ProductService;
 import com.seckill.lab.seckillsystem.service.SeckillActivityService;
+import com.seckill.lab.seckillsystem.vo.SeckillActivityVo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -17,10 +27,16 @@ import java.util.concurrent.TimeUnit;
 public class SeckillController {
 
     @Autowired
+    private static final Logger logger = LoggerFactory.getLogger(SeckillController.class);
+
+    @Autowired
     private SeckillActivityService seckillActivityService;
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private ProductService productService;
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
@@ -83,5 +99,17 @@ public class SeckillController {
         result.put("code", 200);
         result.put("message", "库存预热成功");
         return result;
+    }
+
+    // 根据活动id查看商品详情页
+    @GetMapping("/{activityId}")
+    public ResponseEntity<?> getActivityDetails(@PathVariable Long activityId) {
+        Optional<SeckillActivity> seckillActivity = seckillActivityService.findActivityById(activityId);
+        if(seckillActivity.isPresent()) {
+            return ResponseEntity.ok(seckillActivity.get());
+        }else{
+            Result<Boolean> errorResult = Result.error(ResultCode.ACTIVITY_INVALID.fillArgs("目标活动不存在"));
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResult);
+        }
     }
 }

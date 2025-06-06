@@ -17,7 +17,7 @@ public class ResultCode {
     public static ResultCode SECKILL_FAIL = new ResultCode(500103, "秒杀失败!");
     public static ResultCode ACCESS_LIMIT = new ResultCode(500104, "达到访问限制次数，访问太频繁!");
     public static ResultCode REGISTER_ERROR = new ResultCode(500105, "手机或用户已存在");
-
+    public static ResultCode ACTIVITY_INVALID = new ResultCode(500106, "活动不存在");
 
     public static ResultCode SESSION_ERROR = new ResultCode(500210, "session失效!");
     public static ResultCode PASSWORD_EMPTY = new ResultCode(500211, "密码不能为空!");

@@ -26,6 +26,7 @@ public class SeckillActivityService {
         return seckillActivityRepository.findAll();
     }
 
+    // 根据ID查找活动
     public Optional<SeckillActivity> findActivityById(Long id) {
         return seckillActivityRepository.findById(id);
     }
