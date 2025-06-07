@@ -102,11 +102,18 @@ public class SeckillController {
     }
 
     // 根据活动id查看商品详情页
-    @GetMapping("/{activityId}")
+    @GetMapping("/activity/{activityId}")
     public ResponseEntity<?> getActivityDetails(@PathVariable Long activityId) {
         Optional<SeckillActivity> seckillActivity = seckillActivityService.findActivityById(activityId);
         if(seckillActivity.isPresent()) {
-            return ResponseEntity.ok(seckillActivity.get());
+            SeckillActivity activity = seckillActivity.get();
+            SeckillActivityVo seckillActivityVo = new SeckillActivityVo();
+            BeanUtils.copyProperties(activity, seckillActivityVo);
+            if (activity.getProduct() != null) {
+                seckillActivityVo.setProductVo(activity.getProduct());
+            }
+            logger.info(seckillActivityVo.toString());
+            return ResponseEntity.ok(seckillActivityVo);
         }else{
             Result<Boolean> errorResult = Result.error(ResultCode.ACTIVITY_INVALID.fillArgs("目标活动不存在"));
             return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResult);

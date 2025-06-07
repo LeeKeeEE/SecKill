@@ -37,3 +37,25 @@ export interface OrderInfo {
   createTime: string;
   payTime?: string;
 }
+
+// 对应后端的 ProductVo
+export interface ProductVo {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+  image: string;
+}
+
+// 对应后端的 SeckillActivityVo
+export interface SeckillActivityVo {
+  id: number;
+  name: string;
+  seckillPrice: number;
+  stockCount: number;
+  startTime: string; // 后端是 Date, JSON序列化后变为字符串
+  endTime: string;
+  status: number;
+  productVo: ProductVo; // 嵌套 ProductVo
+}
