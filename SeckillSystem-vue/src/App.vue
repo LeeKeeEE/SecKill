@@ -1,10 +1,10 @@
 <template>
   <header>
     <div class="branding">
-      <img alt="Vue logo" class="logo" src="@/assets/Miku_logo.png" width="120" height="160" />
+      <img alt="Vue logo" class="logo" src="@/assets/Miku_logo.png" width="90" height="120" />
       <div class="wrapper">
         <nav>
-          <RouterLink to="/">首页 (活动列表)</RouterLink>
+          <RouterLink to="/">首页（活动列表）</RouterLink>
           <RouterLink v-if="authStore.isLoggedIn" to="/orders">我的订单</RouterLink>
         </nav>
       </div>
@@ -66,8 +66,8 @@ header {
 }
 
 nav {
-  width: 100%;
-  font-size: 12px;
+  width: 120%;
+  font-size: 14px;
   text-align: center;
 }
 
