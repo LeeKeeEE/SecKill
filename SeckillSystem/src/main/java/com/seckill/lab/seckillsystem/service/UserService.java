@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.seckill.lab.seckillsystem.util.MD5Util;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -49,6 +50,7 @@ public class UserService {
             User newUser = new User();
             newUser.setPhone(phone);
             newUser.setUsername(username);
+            newUser.setRegisterDate(new Date());
             // 生成一个盐
             String salt = "1a2b3c4d"; // 如果希望每个用户的盐是随机的，可以使用 UUID 或 SecureRandom 生成
             // 使用盐进行两次加密
@@ -63,4 +65,5 @@ public class UserService {
         logger.info("Failed to save user");
         return false;
     }
+
 }

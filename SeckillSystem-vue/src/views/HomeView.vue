@@ -74,13 +74,13 @@ const formatDateTime = (dateTimeString: string) => {
 button {
   margin-top: 10px;
   padding: 8px 15px;
-  background-color: #42b983;
+  background-color: #00d2d6;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 button:hover {
-  background-color: #36a374;
+  background-color: #8fffff;
 }
 </style>

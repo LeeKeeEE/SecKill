@@ -50,19 +50,21 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import apiClient from '@/api/axios';
-import md5 from 'blueimp-md5'; // 需要安装 blueimp-md5
+import { useAuthStore } from '@/stores/authStore'; // 已存在
+import apiClient from '@/api/axios'; // 已存在
+import md5 from 'blueimp-md5'; // 已存在
 
 const phone = ref('');
 const password = ref('');
 const errorMessage = ref<string | null>(null);
 const isLoading = ref(false);
+const authStore = useAuthStore();
 const router = useRouter();
 
 const validationErrors = ref<{ phone?: string; password?: string }>({});
 
 // 前端 MD5 加盐处理 (与 login.html 中的逻辑保持一致)
-const JUMP_SALT = '1a2b3c4d'; // 这个盐值应该与 login.html 和 MD5Util.java 中的 salt 一致
+const JUMP_SALT = '1a2b3c4d';
 const prePass = (inputPass: string) => {
   const str = "" + JUMP_SALT.charAt(0) + JUMP_SALT.charAt(2) + inputPass + JUMP_SALT.charAt(5) + JUMP_SALT.charAt(4);
   return md5(str);
@@ -83,7 +85,7 @@ const validateForm = (): boolean => {
   if (!password.value) {
     validationErrors.value.password = '请输入密码';
     isValid = false;
-  } else if (password.value.length < 5) { // 与 login.html 中的验证规则一致
+  } else if (password.value.length < 5) {
     validationErrors.value.password = '密码长度至少为5位';
     isValid = false;
   }
@@ -97,24 +99,32 @@ const handleLogin = async () => {
   }
 
   isLoading.value = true;
+  const formPassword = prePass(password.value);
 
-  const formPassword = prePass(password.value); // 前端密码处理
-
-  // 后端 LoginController @PostMapping("/do_login") 接收 LoginVo (@Valid)
-  // LoginVo 包含 phone 和 password 字段，后端期待的是经过前端一次MD5的密码
-  // 后端 LoginController 的 /do_login 是 @Valid LoginVo loginVo，所以是 application/json
   try {
-    const response = await apiClient.post('/login/do_login', { // apiClient baseURL是/api，所以这里会请求 /api/login/do_login
+    const response = await apiClient.post('/login/do_login', {
       phone: phone.value,
       password: formPassword,
-    }); // axios 默认发送 application/json
+    });
 
-    if (response.data && response.data.code === 0) { // 0 表示成功
-      // 登录成功，后端会设置cookie。前端跳转到目标页面。
-      // login.html 中是跳转到 /goods/list
-      // 在Vue中，可以跳转到首页或活动列表页
-      alert('登录成功！'); // 临时提示
-      router.push('/'); // 跳转到首页 (活动列表)
+    // --- 主要修改在这里 ---
+    if (response.data && response.data.code === 0) {
+      // 假设后端成功时返回 { code: 0, data: { user: User, token: string } }
+      const loginResult = response.data.data;
+
+      if (loginResult && loginResult.user && loginResult.token) {
+        // 调用 authStore 的 action 来保存用户状态
+        authStore.setAuthInfo({
+          user: loginResult.user,
+          token: loginResult.token
+        });
+
+        // 登录成功后跳转到首页
+        await router.push('/');
+      } else {
+        // 如果后端返回 code 0 但数据结构不符
+        errorMessage.value = '登录响应数据格式不正确。';
+      }
     } else {
       errorMessage.value = response.data.msg || '登录失败，请检查手机号或密码。';
     }
@@ -152,7 +162,8 @@ const handleLogin = async () => {
 .login-card h3 {
   text-align: center;
   margin-bottom: 1.5rem;
-  color: #333;
+  color: #555555;
+  font-weight: bold;
 }
 
 .login-form .form-group {
@@ -162,7 +173,7 @@ const handleLogin = async () => {
 .login-form label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #555;
+  color: #555555;
   font-weight: bold;
 }
 
@@ -203,14 +214,14 @@ const handleLogin = async () => {
 }
 
 .btn-primary {
-  background-color: #007bff;
+  background-color: #00d2d6;
   color: white;
   width: 100%;
   margin-bottom: 1rem;
 }
 
 .btn-primary:hover {
-  background-color: #0056b3;
+  background-color: #8fffff;
 }
 
 .btn-primary:disabled {
@@ -219,7 +230,7 @@ const handleLogin = async () => {
 }
 
 .btn-link {
-  color: #007bff;
+  color: #009696;
   background-color: transparent;
   text-decoration: none;
   display: block;

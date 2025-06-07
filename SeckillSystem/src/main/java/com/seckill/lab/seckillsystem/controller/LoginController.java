@@ -44,13 +44,9 @@ public class LoginController {
 
     @PostMapping("/do_login")
     @ResponseBody
-    public Result<Boolean> doLogin(@Valid @RequestBody LoginVo loginVo,HttpServletResponse response) {
+    public Result<?> doLogin(@Valid @RequestBody LoginVo loginVo, HttpServletResponse response) {
         logger.info("Trying to login " + loginVo.getPhone() + ' ' + loginVo.getPassword());
-        ResultCode resultCode = seckillUserService.login(loginVo,response);
-        if (resultCode.getCode() == 0) {
-            return Result.success(true);
-        } else {
-            return Result.error(resultCode);
-        }
+        // 2. 直接返回 Service 层处理后的结果
+        return seckillUserService.login(loginVo, response);
     }
 }

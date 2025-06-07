@@ -176,7 +176,7 @@ const handleRegister = async () => {
 .register-card h3 {
   text-align: center;
   margin-bottom: 1.5rem;
-  color: #0a615f;
+  color: #555555;
   font-weight: bold;
 }
 
@@ -228,14 +228,14 @@ const handleRegister = async () => {
 }
 
 .btn-success {
-  background-color: #00613d;
+  background-color: #00d2d6;
   color: white;
   width: 100%;
   margin-bottom: 1rem;
 }
 
 .btn-success:hover {
-  background-color: #218838;
+  background-color: #00a9a9;
 }
 
 .btn-success:disabled {
@@ -244,7 +244,7 @@ const handleRegister = async () => {
 }
 
 .btn-link {
-  color: #007bff;
+  color: #004457;
   background-color: transparent;
   text-decoration: none;
   display: block;

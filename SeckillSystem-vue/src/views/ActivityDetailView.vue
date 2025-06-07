@@ -13,13 +13,13 @@
         <img v-if="activity.productVo.image" :src="activity.productVo.image" :alt="activity.productVo.name" class="product-image" />
         <p v-if="activity.productVo.description">{{ activity.productVo.description }}</p>
         <p>原价: ¥{{ activity.productVo.price.toFixed(2) }}</p>
-        <p>当前库存: {{ activity.productVo.stock }}</p>
+        <p>当前剩余: {{ activity.productVo.stock }}</p>
       </div>
 
       <div class="seckill-info">
         <h3>秒杀详情</h3>
         <p class="seckill-price">秒杀价: ¥{{ activity.seckillPrice.toFixed(2) }}</p>
-        <p>秒杀库存: {{ activity.stockCount }}</p>
+        <p>活动仅剩: {{ activity.stockCount }} 件</p>
         <p>开始时间: {{ new Date(activity.startTime).toLocaleString() }}</p>
         <p>结束时间: {{ new Date(activity.endTime).toLocaleString() }}</p>
         <p>状态: <span :class="statusClass">{{ getActivityStatusText(activity.status) }}</span></p>
@@ -162,7 +162,7 @@ async function handleSeckill() {
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 24px;
-  background-color: #f9f9f9;
+  background-color: #d7faf786;
 }
 h1 {
   text-align: center;
@@ -170,7 +170,7 @@ h1 {
 }
 .product-info, .seckill-info, .seckill-action {
   margin-bottom: 20px;
-  background-color: #fff;
+  background-color: #f1fffdfb;
   padding: 16px;
   border-radius: 4px;
 }
@@ -180,7 +180,7 @@ h1 {
   margin-bottom: 15px;
 }
 .seckill-price {
-  color: #e44d26;
+  color: #d14927cc;
   font-size: 1.5em;
   font-weight: bold;
 }
@@ -188,7 +188,7 @@ h1 {
   text-align: center;
 }
 .seckill-button {
-  background-color: #28a745;
+  background-color: #00bac7;
   color: white;
   padding: 12px 24px;
   border: none;
@@ -202,7 +202,7 @@ h1 {
   cursor: not-allowed;
 }
 .seckill-button:hover:not(:disabled) {
-  background-color: #218838;
+  background-color: #6ccaddcb;
 }
 .error-message {
   color: #d9534f;
@@ -213,7 +213,7 @@ h1 {
   margin-top: 10px;
 }
 .status-inprogress {
-  color: #5cb85c;
+  color: #2cbacaa9;
   font-weight: bold;
 }
 .status-ended {
