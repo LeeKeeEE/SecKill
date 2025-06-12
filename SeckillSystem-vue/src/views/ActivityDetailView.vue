@@ -48,7 +48,8 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import apiClient from '@/api/axios'; // 引入你的axios实例
-import type { SeckillActivityVo } from '@/types/index'; // 假设你创建了对应的VO类型
+import type { SeckillActivityVo } from '@/types/index';
+import { useAuthStore } from '@/stores/authStore';
 
 const route = useRoute();
 const activityId = route.params.id as string;
@@ -56,10 +57,10 @@ const activityId = route.params.id as string;
 const activity = ref<SeckillActivityVo | null>(null);
 const isLoading = ref(true);
 const errorMessage = ref<string | null>(null);
-
 const seckillInProgress = ref(false);
 const seckillMessage = ref<string | null>(null);
 const seckillResultIsError = ref(false);
+const authStore = useAuthStore();
 
 // 计算属性，用于根据状态动态添加CSS类
 const statusClass = computed(() => {
@@ -112,8 +113,12 @@ async function handleSeckill() {
     return;
   }
 
-  // 此处需要获取真实的用户ID
-  const userId = 1; // 假设用户ID为1，你需要替换为真实的登录用户ID
+  const userId = authStore.user?.id;
+  // 检查用户是否登录
+  if (!userId) {
+    seckillMessage.value = '请先登录后再进行秒杀！';
+    return;
+  }
 
   seckillInProgress.value = true;
   seckillMessage.value = null;
