@@ -43,8 +43,7 @@ export const useActivityStore = defineStore('activity', {
       this.error = null;
       this.currentActivity = null;
       try {
-        // 假设后端接口为 /api/seckill/activities/{id}
-        const response = await apiClient.get<SeckillActivity>(`/seckill/activities/${id}`);
+        const response = await apiClient.get<SeckillActivity>(`/seckill/activitiy/${id}`);
         this.currentActivity = response.data;
       } catch (err: any) {
         this.error = err.response?.data?.message || err.message || '获取活动详情失败';

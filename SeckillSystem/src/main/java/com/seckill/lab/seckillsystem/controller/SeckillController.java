@@ -1,6 +1,7 @@
 package com.seckill.lab.seckillsystem.controller;
 
 import com.seckill.lab.seckillsystem.entity.SeckillActivity;
+import com.seckill.lab.seckillsystem.repository.SeckillActivityRepository;
 import com.seckill.lab.seckillsystem.result.Result;
 import com.seckill.lab.seckillsystem.result.ResultCode;
 import com.seckill.lab.seckillsystem.service.OrderService;
@@ -16,10 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -41,6 +39,9 @@ public class SeckillController {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    @Autowired
+    private SeckillActivityRepository seckillActivityRepository;
+
     // 限流前缀
     private static final String RATE_LIMIT_PREFIX = "rate:limit:";
 
@@ -54,6 +55,27 @@ public class SeckillController {
                                          @RequestParam Long productId,
                                          @RequestParam Long activityId) {
         Map<String, Object> result = new HashMap<>();
+
+        Optional<SeckillActivity> activityOptional = seckillActivityRepository.findById(activityId);
+        if (activityOptional.isEmpty()) {
+            result.put("code", 500);
+            result.put("message", "活动不存在！");
+            return result;
+        }
+        SeckillActivity activity = activityOptional.get();
+        Date now = new Date();
+        if (now.before(activity.getStartTime())) {
+            logger.info("秒杀请求，活动未开始");
+            result.put("code", 500);
+            result.put("message", "活动尚未开始，请耐心等待！");
+            return result;
+        }
+        if (now.after(activity.getEndTime())) {
+            logger.info("秒杀请求，但活动已结束");
+            result.put("code", 500);
+            result.put("message", "抱歉，活动已经结束了。");
+            return result;
+        }
 
         // 用户请求限流控制
         String limitKey = RATE_LIMIT_PREFIX + userId;

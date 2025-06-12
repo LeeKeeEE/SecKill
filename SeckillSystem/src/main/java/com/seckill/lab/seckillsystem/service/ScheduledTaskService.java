@@ -25,7 +25,8 @@ public class ScheduledTaskService {
      */
     @Scheduled(cron = "0 * * * * ?")
     public void checkAndStartActivities() {
-        log.info("定时任务：开始检查需要启动的秒杀活动...");
+        Date now = new Date();
+        log.info("定时任务：开始检查需要启动的秒杀活动..." + now);
         // 查找所有状态为“未开始”且开始时间已到的活动
         List<SeckillActivity> activitiesToStart = activityRepository.findByStatusAndStartTimeBefore(0, new Date());
 
@@ -41,7 +42,8 @@ public class ScheduledTaskService {
      */
     @Scheduled(cron = "0 * * * * ?")
     public void checkAndEndActivities() {
-        log.info("定时任务：开始检查需要结束的秒杀活动...");
+        Date now = new Date();
+        log.info("定时任务：开始检查需要结束的秒杀活动..." + now);
         // 查找所有状态为“进行中”且结束时间已到的活动
         List<SeckillActivity> activitiesToEnd = activityRepository.findByStatusAndEndTimeBefore(1, new Date());
 
