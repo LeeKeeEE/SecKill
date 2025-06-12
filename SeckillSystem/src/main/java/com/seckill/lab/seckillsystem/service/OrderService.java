@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -26,6 +24,9 @@ public class OrderService {
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    private UserService userService;
 
     // 防止重复下单的Redis键前缀
     private static final String ORDER_KEY_PREFIX = "order:user:";
@@ -57,5 +58,22 @@ public class OrderService {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 根据用户ID查询订单列表
+     * @param userId
+     * @return
+     */
+    public List<OrderInfo> getOrdersByUserId(Long userId) {
+        // 获取用户信息
+        Optional<User> userOptional = userService.findUserById(userId);
+        if (!userOptional.isPresent()) {
+            return Collections.emptyList();
+        }
+
+        // 根据用户查询订单
+        User user = userOptional.get();
+        return orderInfoRepository.findByUser(user);
     }
 }
