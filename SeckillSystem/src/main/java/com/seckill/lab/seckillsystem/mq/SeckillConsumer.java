@@ -1,6 +1,7 @@
 package com.seckill.lab.seckillsystem.mq;
 
 import com.seckill.lab.seckillsystem.config.RabbitMQConfig;
+import com.seckill.lab.seckillsystem.controller.SeckillController;
 import com.seckill.lab.seckillsystem.entity.OrderInfo;
 import com.seckill.lab.seckillsystem.entity.Product;
 import com.seckill.lab.seckillsystem.entity.SeckillActivity;
@@ -9,6 +10,8 @@ import com.seckill.lab.seckillsystem.service.OrderService;
 import com.seckill.lab.seckillsystem.service.ProductService;
 import com.seckill.lab.seckillsystem.service.SeckillActivityService;
 import com.seckill.lab.seckillsystem.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,6 +23,8 @@ import java.util.Optional;
 
 @Component
 public class SeckillConsumer {
+    @Autowired
+    private static final Logger logger = LoggerFactory.getLogger(SeckillConsumer.class);
 
     @Autowired
     private OrderService orderService;
@@ -36,9 +41,9 @@ public class SeckillConsumer {
     @RabbitListener(queues = RabbitMQConfig.SECKILL_QUEUE)
     @Transactional
     public void receiveSeckillMessage(Map<String, Object> message) {
-        Long userId = (Long) message.get("userId");
-        Long productId = (Long) message.get("productId");
-        Long activityId = (Long) message.get("activityId");
+        Long userId = ((Number) message.get("userId")).longValue();
+        Long productId = ((Number) message.get("productId")).longValue();
+        Long activityId = ((Number) message.get("activityId")).longValue();
 
         // 检查用户是否存在
         Optional<User> userOpt = userService.findUserById(userId);
@@ -67,9 +72,14 @@ public class SeckillConsumer {
 
                 // 数据库中减库存
                 activity.setStockCount(activity.getStockCount() - 1);
+                logger.info("Seckill Activity: " + activity + " Done");
                 seckillActivityService.saveActivity(activity);
 
                 // 实际项目中还需要处理其他业务逻辑，如通知用户等
+            }else {
+                logger.info(" 未在活动时间范围内 " +
+                        "userId= " + userId +
+                        "activityId = " + activityId);
             }
         }
     }
