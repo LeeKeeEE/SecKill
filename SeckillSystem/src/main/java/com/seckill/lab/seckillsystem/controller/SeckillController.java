@@ -141,4 +141,33 @@ public class SeckillController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResult);
         }
     }
+
+    @PostMapping("/doSeckillDbOnly")
+    public Result<?> doSeckillDbOnly(@RequestParam Long userId,
+                                     @RequestParam Long productId,
+                                     @RequestParam Long activityId) {
+        // 对活动状态进行初步检查
+        Optional<SeckillActivity> activityOptional = seckillActivityService.findActivityById(activityId);
+        if (activityOptional.isEmpty()) {
+            return Result.error(ResultCode.ACTIVITY_INVALID);
+        }
+        SeckillActivity activity = activityOptional.get();
+        Date now = new Date();
+        if (now.before(activity.getStartTime())) {
+            return Result.error(ResultCode.SECKILL_FAIL.fillArgs("活动尚未开始"));
+        }
+        if (now.after(activity.getEndTime())) {
+            return Result.error(ResultCode.SECKILL_FAIL.fillArgs("活动已经结束"));
+        }
+
+
+        
+        // 将事务逻辑委托给服务层
+        try {
+            return seckillActivityService.performSeckillDbOnly(userId, productId, activityId);
+        } catch (Exception e) {
+            logger.error("纯数据库秒杀失败, activityId: {}, userId: {}", activityId, userId, e);
+            return Result.error(ResultCode.SECKILL_FAIL.fillArgs(e.getMessage()));
+        }
+    }
 }
