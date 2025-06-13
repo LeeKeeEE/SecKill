@@ -27,17 +27,6 @@ export interface User {
   phone?: string;
   // 其他用户信息，根据需要添加
 }
-
-export interface OrderInfo {
-  id: number;
-  user: User;
-  product: Product;
-  orderAmount: number;
-  status: number; // 0: 未支付, 1: 已支付, 2: 已取消
-  createTime: string;
-  payTime?: string;
-}
-
 // 对应后端的 ProductVo
 export interface ProductVo {
   id: number;
@@ -58,4 +47,27 @@ export interface SeckillActivityVo {
   endTime: string;
   status: number;
   productVo: ProductVo; // 嵌套 ProductVo
+}
+export interface UserVO {
+  id: number;
+  username: string;
+  phone: string;
+}
+export interface ProductInfoVo {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  image: string; // 注意：字段名是 image
+  createTime: string;
+  updateTime: string;
+}
+export interface OrderInfo {
+  id: number;
+  userVO: UserVO;
+  productInfoVo: ProductInfoVo;
+  orderAmount: number;
+  status: number;
+  createTime: string;
+  payTime: string | null;
 }
