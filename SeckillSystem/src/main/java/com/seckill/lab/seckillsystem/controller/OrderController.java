@@ -4,6 +4,7 @@ import com.seckill.lab.seckillsystem.entity.OrderInfo;
 import com.seckill.lab.seckillsystem.result.Result;
 import com.seckill.lab.seckillsystem.service.OrderService;
 import com.seckill.lab.seckillsystem.service.UserService;
+import com.seckill.lab.seckillsystem.vo.OrderInfoVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +30,9 @@ public class OrderController {
      * @return 订单列表
      */
     @GetMapping("/user/{userId}")
-    public Result<List<OrderInfo>> getOrdersByUserId(@PathVariable Long userId) {
+    public Result<List<OrderInfoVo>> getOrdersByUserId(@PathVariable Long userId) {
         logger.info("查询用户ID={}的订单列表", userId);
-        List<OrderInfo> orders = orderService.getOrdersByUserId(userId);
+        List<OrderInfoVo> orders = orderService.getOrdersByUserId(userId);
         return Result.success(orders);
     }
 }

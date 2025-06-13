@@ -5,7 +5,10 @@ import com.seckill.lab.seckillsystem.entity.OrderInfo;
 import com.seckill.lab.seckillsystem.entity.Product;
 import com.seckill.lab.seckillsystem.entity.User;
 import com.seckill.lab.seckillsystem.repository.OrderInfoRepository;
+import com.seckill.lab.seckillsystem.vo.OrderInfoVo;
+import com.seckill.lab.seckillsystem.vo.UserVo;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -65,15 +68,21 @@ public class OrderService {
      * @param userId
      * @return
      */
-    public List<OrderInfo> getOrdersByUserId(Long userId) {
+    public List<OrderInfoVo> getOrdersByUserId(Long userId) {
         // 获取用户信息
         Optional<User> userOptional = userService.findUserById(userId);
-        if (!userOptional.isPresent()) {
+        if (userOptional.isEmpty()) {
             return Collections.emptyList();
         }
-
         // 根据用户查询订单
         User user = userOptional.get();
-        return orderInfoRepository.findByUser(user);
+        List<OrderInfo> orderInfos = orderInfoRepository.findByUser(user);
+        List<OrderInfoVo> orderInfoVoList = new ArrayList<>();
+        Iterator<OrderInfo> iterator = orderInfos.iterator();
+        while (iterator.hasNext()) {
+            OrderInfo currentOrder = iterator.next();
+            orderInfoVoList.add(new OrderInfoVo(currentOrder));
+        }
+        return orderInfoVoList;
     }
 }
