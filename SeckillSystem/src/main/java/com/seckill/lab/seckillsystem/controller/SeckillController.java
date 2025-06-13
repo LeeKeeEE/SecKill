@@ -160,8 +160,6 @@ public class SeckillController {
             return Result.error(ResultCode.SECKILL_FAIL.fillArgs("活动已经结束"));
         }
 
-
-        
         // 将事务逻辑委托给服务层
         try {
             return seckillActivityService.performSeckillDbOnly(userId, productId, activityId);

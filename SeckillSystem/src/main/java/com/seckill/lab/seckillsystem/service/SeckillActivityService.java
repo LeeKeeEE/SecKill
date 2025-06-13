@@ -97,10 +97,10 @@ public class SeckillActivityService {
             return Result.error(ResultCode.REQUEST_ILLEGAL.fillArgs("产品ID不匹配"));
         }
 
-        // 3. 检查重复订单
-        if (orderInfoRepository.existsByUserAndProduct(userOpt.get(), product)) {
-            return Result.error(ResultCode.REPEAT_SECKILL);
-        }
+        // 3. 检查重复订单 压力测试不检查
+//        if (orderInfoRepository.existsByUserAndProduct(userOpt.get(), product)) {
+//            return Result.error(ResultCode.REPEAT_SECKILL);
+//        }
 
         // 4. 检查库存
         if (activity.getStockCount() <= 0) {
