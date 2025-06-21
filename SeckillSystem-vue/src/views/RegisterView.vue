@@ -119,7 +119,6 @@ const handleRegister = async () => {
   isLoading.value = true;
 
   // 后端 RegisterController @PostMapping("/register") 接收 @RequestParam
-  // 通常表单提交方式是 application/x-www-form-urlencoded
   const params = new URLSearchParams();
   params.append('phone', phone.value);
   params.append('username', username.value);
@@ -133,7 +132,6 @@ const handleRegister = async () => {
       }
     });
 
-    // 如果没有错误，且返回状态码是2xx，就认为成功
     if (response.status >= 200 && response.status < 300) {
         alert('注册成功！将跳转到登录页面。'); // 临时提示
         router.push('/login');

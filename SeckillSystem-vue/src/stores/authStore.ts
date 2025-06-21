@@ -43,8 +43,6 @@ export const useAuthStore = defineStore('auth', {
       this.token = null;
       localStorage.removeItem('user');
       localStorage.removeItem('token');
-      // 退出后可以重定向到登录页
-      // this.router.push('/login');
     },
   },
 });

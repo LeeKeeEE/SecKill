@@ -152,10 +152,6 @@ async function handleSeckill() {
   if (!userId) {
     seckillMessage.value = '请先登录后再进行秒杀！';
     seckillResultIsError.value = true;
-    // 可以在这里添加跳转到登录页的逻辑
-    // import { useRouter } from 'vue-router';
-    // const router = useRouter();
-    // router.push('/login');
     return;
   }
 
@@ -175,8 +171,8 @@ async function handleSeckill() {
       // 对于成功提交的请求
       await ElMessageBox.alert(result.data.message || '秒杀请求已提交！', '太棒了！', {
         confirmButtonText: '好的',
-        icon: SuccessIcon, // 使用自定义图标
-        customClass: 'seckill-dialog-box', // 【核心修正】应用自定义CSS类
+        icon: SuccessIcon,
+        customClass: 'seckill-dialog-box',
       });
     } else {
       // 对于“未开始”、“库存不足”等业务失败

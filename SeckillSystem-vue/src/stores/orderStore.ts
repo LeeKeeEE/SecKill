@@ -13,7 +13,7 @@ export const useOrderStore = defineStore('order', {
       this.isLoading = true
       this.error = null
       try {
-        // The backend returns a Result object: { code, msg, data }
+        //{ code, msg, data }
         const response = await apiClient.get(`/order/user/${userId}`)
         if (response.data && response.data.code === 0) {
           this.orders = response.data.data

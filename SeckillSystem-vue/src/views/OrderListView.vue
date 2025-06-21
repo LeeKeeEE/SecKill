@@ -171,7 +171,7 @@ const formatDateTime = (dateTimeString: string): string => {
 .product-info {
   display: flex;
   align-items: center;
-  flex: 3; /* 占据更多空间 */
+  flex: 3;
   gap: 1rem;
 }
 .product-image {

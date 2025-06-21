@@ -50,9 +50,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/authStore'; // 已存在
-import apiClient from '@/api/axios'; // 已存在
-import md5 from 'blueimp-md5'; // 已存在
+import { useAuthStore } from '@/stores/authStore';
+import apiClient from '@/api/axios';
+import md5 from 'blueimp-md5';
 
 const phone = ref('');
 const password = ref('');
@@ -107,9 +107,7 @@ const handleLogin = async () => {
       password: formPassword,
     });
 
-    // --- 主要修改在这里 ---
     if (response.data && response.data.code === 0) {
-      // 假设后端成功时返回 { code: 0, data: { user: User, token: string } }
       const loginResult = response.data.data;
 
       if (loginResult && loginResult.user && loginResult.token) {
@@ -122,7 +120,6 @@ const handleLogin = async () => {
         // 登录成功后跳转到首页
         await router.push('/');
       } else {
-        // 如果后端返回 code 0 但数据结构不符
         errorMessage.value = '登录响应数据格式不正确。';
       }
     } else {
